@@ -1,1 +1,63 @@
-hello
+<html>
+<heard></heard>
+<title></title>
+    <script>
+        window.onload = function () {
+            var oDiv = document.getElementById('div');
+            var oImg = document.getElementById('img');
+
+            drag(oDiv);
+            drag(oImg);
+
+            //拖拽的封装
+            function drag(obj) {
+                obj.onmousedown = function (ev) {
+                    var eve = ev || event;
+                    var thisX = eve.clientX - obj.offsetLeft;
+                    var thisY = eve.clientY - obj.offsetTop;
+                    //全局捕获
+                    if (obj.setCapture)
+                        obj.setCapture();
+
+                    document.onmousemove = function (ev) {
+                        var eve = ev || event;
+                        //获取改变后得到的数值，方便限制
+                        var L = eve.clientX - thisX;
+                        var T = eve.clientY - thisY;
+                        //限制left
+                        if (L < 50) {        //修改 L < 后的数字可以达到磁性吸附的效果
+                            L = 0;
+                        }
+                        else if (L > document.documentElement.clientWidth - obj.offsetWidth - 50) {
+                            L = document.documentElement.clientWidth - obj.offsetWidth;
+                        }                   
+                        //限制top
+                        if (T < 50) {
+                            T = 0;
+                        }
+                        else if (T > document.documentElement.clientHeight - obj.offsetHeight - 50) {
+                            T = document.documentElement.clientHeight - obj.offsetHeight;
+                        }
+
+                        obj.style.left = L + 'px';
+                        obj.style.top = T + 'px';
+
+                        document.onmouseup = function () {
+                            document.onmousemove = document.onmouseup = null;
+                            //释放全局捕获
+                            if (obj.releaseCapture)
+                                obj.releaseCapture();
+                        }
+                    }
+                    return false;
+                }
+            }
+
+        }
+    </script>
+</head>
+<body>
+    <div id="div" style="width:100px;height:100px;position:absolute;background-color:#f00;left:40%;top:40%"></div>
+    <img id="img" src="img/1.gif" style="position:absolute;left:150px" />
+</body>
+</html>
